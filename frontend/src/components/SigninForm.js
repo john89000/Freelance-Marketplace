@@ -1,0 +1,69 @@
+import React, { useState } from 'react';
+
+const modalStyle = {
+  position: 'fixed',
+  top: 0,
+  left: 0,
+  width: '100vw',
+  height: '100vh',
+  background: 'rgba(0,0,0,0.3)',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  zIndex: 1000,
+};
+const formStyle = {
+  background: '#fff',
+  borderRadius: '12px',
+  boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
+  padding: '32px 28px',
+  minWidth: '320px',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '18px',
+};
+
+export default function SigninForm({ onClose, onLogin }) {
+  const [form, setForm] = useState({ email: '', password: '' });
+  const [message, setMessage] = useState('');
+
+  const handleChange = e => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async e => {
+    e.preventDefault();
+    setMessage('');
+    let data = {};
+    let ok = false;
+    try {
+      const res = await fetch('http://localhost:5000/api/users/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+      ok = res.ok;
+      data = ok ? await res.json() : { message: 'Sign in failed.' };
+      if (ok && data.user) {
+        onLogin(data.user);
+        setForm({ email: '', password: '' });
+      }
+    } catch (err) {
+      data = { message: 'Network error.' };
+    }
+    setMessage(data.message);
+  };
+
+  return (
+    <div style={modalStyle}>
+      <form style={formStyle} onSubmit={handleSubmit}>
+        <h2 style={{ color: '#1976d2', textAlign: 'center' }}>Sign In</h2>
+        <input name="email" type="email" placeholder="Email" value={form.email} onChange={handleChange} required style={{ padding: '10px', borderRadius: '6px', border: '1px solid #bdbdbd' }} />
+        <input name="password" type="password" placeholder="Password" value={form.password} onChange={handleChange} required style={{ padding: '10px', borderRadius: '6px', border: '1px solid #bdbdbd' }} />
+        <button type="submit" style={{ background: 'linear-gradient(90deg, #1976d2 60%, #64b5f6 100%)', color: '#fff', border: 'none', borderRadius: '6px', padding: '12px', fontWeight: 'bold', fontSize: '1.1rem', cursor: 'pointer', marginTop: '10px' }}>Sign In</button>
+        <button type="button" onClick={onClose} style={{ background: '#eee', color: '#1976d2', border: 'none', borderRadius: '6px', padding: '10px', fontWeight: 'bold', fontSize: '1rem', cursor: 'pointer', marginTop: '6px' }}>Cancel</button>
+  {message && <div style={{ color: message === 'Login successful.' ? 'green' : 'red', textAlign: 'center', marginTop: '10px' }}>{message}</div>}
+      </form>
+    </div>
+  );
+}
