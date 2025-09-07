@@ -37,7 +37,7 @@ function App() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/gigs')
+    fetch(`${process.env.REACT_APP_API_URL}/gigs`)
       .then(res => res.json())
       .then(data => setGigs(data));
   }, []);

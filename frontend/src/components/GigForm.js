@@ -9,7 +9,7 @@ function GigForm({ setGigs }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const res = await fetch('http://localhost:5000/api/gigs', {
+    const res = await fetch(`${process.env.REACT_APP_API_URL}/gigs`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(form),

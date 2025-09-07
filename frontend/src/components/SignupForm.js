@@ -37,7 +37,7 @@ export default function SignupForm({ onClose }) {
     let data = {};
     let ok = false;
     try {
-      const res = await fetch('http://localhost:5000/api/users/signup', {
+  const res = await fetch(`${process.env.REACT_APP_API_URL}/users/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
