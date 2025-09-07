@@ -23,7 +23,7 @@ const formStyle = {
   gap: '18px',
 };
 
-export default function SignupForm({ onClose }) {
+export default function SignupForm({ onClose, onSignupSuccess }) {
   const [form, setForm] = useState({ username: '', email: '', password: '' });
   const [message, setMessage] = useState('');
 
@@ -48,7 +48,10 @@ export default function SignupForm({ onClose }) {
       data = { message: 'Network error.' };
     }
     setMessage(data.message);
-    if (ok) setForm({ username: '', email: '', password: '' });
+    if (ok) {
+      setForm({ username: '', email: '', password: '' });
+      if (typeof onSignupSuccess === 'function') onSignupSuccess();
+    }
   };
 
   return (
